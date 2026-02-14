@@ -1,16 +1,18 @@
 from fastapi import APIRouter
-
-from app.services.influx_service import get_latest_weather
 from ml.predict import predict_next_30_min
 
-router = APIRouter()
+router = APIRouter(prefix="/api/weather", tags=["Weather"])
 
-@router.get("/latest")
-def latest_weather():
-    return get_latest_weather()
 
 @router.get("/predict")
 def predict_weather():
-    return predict_next_30_min()
-
-
+    try:
+        return {
+            "status": "success",
+            "data": predict_next_30_min()
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
