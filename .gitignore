@@ -1,13 +1,52 @@
+# =========================
 # Python
+# =========================
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# Virtual environment
+# =========================
+# Virtual Environments
+# =========================
 .venv/
 venv/
+env/
 
-# Env
+# =========================
+# Environment variables
+# =========================
 .env
 
-# OS
+# =========================
+# OS / Editor junk
+# =========================
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# ML Artifacts (IMPORTANT)
+# =========================
+*.pkl
+*.joblib
+*.h5
+
+# =========================
+# Data files (optional safety)
+# =========================
+*.csv
+*.parquet
+
+# =========================
+# Node / Frontend (future-proof)
+# =========================
+node_modules/
+dist/
+build/
