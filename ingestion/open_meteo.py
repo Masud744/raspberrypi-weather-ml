@@ -1,71 +1,61 @@
 import time
+import os
 import requests
-from datetime import datetime, timezone
+from influxdb_client import InfluxDBClient, Point
+from influxdb_client.client.write_api import SYNCHRONOUS
+from dotenv import load_dotenv
 
-from influxdb_client import InfluxDBClient, Point, WriteOptions
+# Load .env
+load_dotenv()
 
-from app.core.config import (
-    INFLUX_URL,
-    INFLUX_TOKEN,
-    INFLUX_ORG,
-    INFLUX_BUCKET,
-)
+# InfluxDB config
+INFLUX_URL = os.getenv("INFLUX_URL")
+INFLUX_TOKEN = os.getenv("INFLUX_TOKEN")
+INFLUX_ORG = os.getenv("INFLUX_ORG")
+INFLUX_BUCKET = os.getenv("INFLUX_BUCKET")
 
+# Location (Bangladesh example)
 LATITUDE = 23.97
 LONGITUDE = 90.32
+
 INTERVAL = 300  # 5 minutes
 
-API_URL = (
-    "https://api.open-meteo.com/v1/forecast"
-    "?latitude={lat}&longitude={lon}"
-    "&current=temperature_2m,relative_humidity_2m,"
-    "pressure_msl,wind_speed_10m,wind_direction_10m"
+client = InfluxDBClient(
+    url=INFLUX_URL,
+    token=INFLUX_TOKEN,
+    org=INFLUX_ORG
 )
 
-def fetch_weather():
-    r = requests.get(
-        API_URL.format(lat=LATITUDE, lon=LONGITUDE),
-        timeout=10
-    )
-    r.raise_for_status()
-    return r.json()["current"]
+write_api = client.write_api(write_options=SYNCHRONOUS)
 
-def write_to_influx(data):
-    client = InfluxDBClient(
-        url=INFLUX_URL,
-        token=INFLUX_TOKEN,
-        org=INFLUX_ORG
-    )
+while True:
+    try:
+        url = (
+            "https://api.open-meteo.com/v1/forecast"
+            f"?latitude={LATITUDE}&longitude={LONGITUDE}"
+            "&current=temperature_2m,relative_humidity_2m,"
+            "pressure_msl,wind_speed_10m,wind_direction_10m"
+        )
 
-    write_api = client.write_api(
-        write_options=WriteOptions(synchronous=True)
-    )
+        response = requests.get(url, timeout=10)
+        data = response.json()
+        current = data["current"]
 
-    point = (
-        Point("weather_live")
-        .field("temperature", data["temperature_2m"])
-        .field("humidity", data["relative_humidity_2m"])
-        .field("pressure", data["pressure_msl"])
-        .field("wind_speed", data["wind_speed_10m"])
-        .field("wind_direction", data["wind_direction_10m"])
-        .time(datetime.now(timezone.utc))
-    )
+        point = (
+            Point("weather_live")
+            .field("temperature", current["temperature_2m"])
+            .field("humidity", current["relative_humidity_2m"])
+            .field("pressure", current["pressure_msl"])
+            .field("wind_speed", current["wind_speed_10m"])
+            .field("wind_direction", current["wind_direction_10m"])
+            .time(current["time"])
+        )
 
-    write_api.write(bucket=INFLUX_BUCKET, record=point)
-    client.close()
+        write_api.write(bucket=INFLUX_BUCKET, record=point)
 
-def run():
-    print("🌦 Open-Meteo ingestion worker started")
+        print("✅ Data written:", current["time"])
 
-    while True:
-        try:
-            data = fetch_weather()
-            write_to_influx(data)
-            print("✅ Data written at", datetime.now(timezone.utc))
-        except Exception as e:
-            print("❌ Ingestion error:", e)
+    except Exception as e:
+        print("❌ Error:", e)
 
-        time.sleep(INTERVAL)
-
-if __name__ == "__main__":
-    run()
+    time.sleep(INTERVAL)
