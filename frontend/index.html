@@ -2,82 +2,342 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Live Weather Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Analytics Dashboard - Kaliakair</title>
 
-  <!-- CSS LINK (THIS WAS MISSING) -->
+  <!-- CSS Link -->
   <link rel="stylesheet" href="style.css">
-  <!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-  <h1>🌦 Live Weather Dashboard</h1>
+  <!-- Background -->
+  <div class="app-background"></div>
 
-  <div class="dashboard">
+  <!-- ==================== LOGIN PAGE ==================== -->
+  <div class="auth-container" id="loginPage">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-icon">🌤️</div>
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-subtitle">Sign in to Weather Analytics</p>
+      </div>
 
-    <div class="card">
-      <h3>⏱ Time</h3>
-      <p id="time">--</p>
+      <form id="loginForm" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input 
+            type="email" 
+            class="form-input" 
+            id="loginEmail" 
+            placeholder="Enter your email"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input 
+            type="password" 
+            class="form-input" 
+            id="loginPassword" 
+            placeholder="Enter your password"
+            required
+          >
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="rememberMe">
+            <span>Remember me</span>
+          </label>
+          <a href="#" class="link-text" onclick="showForgotPassword(event)">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="auth-btn">Sign In</button>
+
+        <div class="error-message" id="loginError">
+          Invalid email or password. Please try again.
+        </div>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? 
+        <a href="#" class="link-text" onclick="showSignup(event)">Sign up</a>
+      </div>
     </div>
+  </div>
 
-    <div class="card">
-      <h3>🌡 Temperature</h3>
-      <p><span id="temperature">--</span> °C</p>
-    </div>
+  <!-- ==================== SIGNUP PAGE ==================== -->
+  <div class="auth-container" id="signupPage" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-icon">🚀</div>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Join Weather Analytics today</p>
+      </div>
 
-    <div class="card">
-      <h3>💧 Humidity</h3>
-      <p><span id="humidity">--</span> %</p>
-    </div>
+      <form id="signupForm" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input 
+            type="text" 
+            class="form-input" 
+            id="signupName" 
+            placeholder="Enter your full name"
+            required
+          >
+        </div>
 
-    <div class="card">
-      <h3>📈 Pressure</h3>
-      <p><span id="pressure">--</span> hPa</p>
-    </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input 
+            type="email" 
+            class="form-input" 
+            id="signupEmail" 
+            placeholder="Enter your email"
+            required
+          >
+        </div>
 
-    <div class="card">
-      <h3>🌬 Wind Speed</h3>
-      <p><span id="wind_speed">--</span> m/s</p>
-    </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input 
+            type="password" 
+            class="form-input" 
+            id="signupPassword" 
+            placeholder="Create a password (min 6 characters)"
+            minlength="6"
+            required
+          >
+        </div>
 
-    <div class="card">
-      <h3>🧭 Wind Direction</h3>
-      <p><span id="wind_direction">--</span> °</p>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <input 
+            type="password" 
+            class="form-input" 
+            id="signupConfirmPassword" 
+            placeholder="Confirm your password"
+            required
+          >
+        </div>
+
+        <button type="submit" class="auth-btn">Create Account</button>
+
+        <div class="error-message" id="signupError">
+          Error message will appear here.
+        </div>
+
+        <div class="success-message" id="signupSuccess">
+          Account created successfully! Redirecting to login...
+        </div>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? 
+        <a href="#" class="link-text" onclick="showLogin(event)">Sign in</a>
+      </div>
     </div>
+  </div>
+
+  <!-- ==================== FORGOT PASSWORD PAGE ==================== -->
+  <div class="auth-container" id="forgotPasswordPage" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-icon">🔑</div>
+        <h1 class="auth-title">Reset Password</h1>
+        <p class="auth-subtitle">We'll send you a reset link</p>
+      </div>
+
+      <form id="forgotPasswordForm" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input 
+            type="email" 
+            class="form-input" 
+            id="forgotEmail" 
+            placeholder="Enter your email"
+            required
+          >
+        </div>
+
+        <button type="submit" class="auth-btn">Send Reset Link</button>
+
+        <div class="error-message" id="forgotError">
+          Email not found. Please check and try again.
+        </div>
+
+        <div class="success-message" id="forgotSuccess">
+          Reset link sent! Check your email inbox.
+        </div>
+      </form>
+
+      <div class="auth-footer">
+        Remember your password? 
+        <a href="#" class="link-text" onclick="showLogin(event)">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DASHBOARD ==================== -->
+  <div class="dashboard-container" id="dashboardPage">
+    
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-top">
+        <div>
+          <h1 class="app-title">
+            <span class="title-icon">🌤️</span>
+            Weather Analytics
+          </h1>
+          <p class="header-subtitle">A Raspberry Pi Based Real-Time Weather Monitoring and Short-Term Prediction System using IoT, InfluxDB, and Machine Learning</p>
+        </div>
+        <div class="header-right">
+          <div class="location-badge">
+            <span class="location-icon">📍</span>
+            <span>Kaliakair, Bangladesh</span>
+          </div>
+          <div class="status-badge">
+            <span class="status-dot"></span>
+            <span id="status">Live</span>
+          </div>
+          <div class="user-menu">
+            <span class="user-name" id="userName">User</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Metrics Grid -->
+    <section class="metrics-grid">
+      
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Kaliakair Time</span>
+          <span class="metric-icon">🕐</span>
+        </div>
+        <div class="metric-value" id="time">--:--:--</div>
+        <div class="metric-subtext" id="date">Loading...</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Temperature</span>
+          <span class="metric-icon">🌡️</span>
+        </div>
+        <div>
+          <span class="metric-value" id="temperature">--</span>
+          <span class="metric-unit">°C</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Humidity</span>
+          <span class="metric-icon">💧</span>
+        </div>
+        <div>
+          <span class="metric-value" id="humidity">--</span>
+          <span class="metric-unit">%</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Pressure</span>
+          <span class="metric-icon">🔘</span>
+        </div>
+        <div>
+          <span class="metric-value" id="pressure">--</span>
+          <span class="metric-unit">hPa</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Wind Speed</span>
+          <span class="metric-icon">🌬️</span>
+        </div>
+        <div>
+          <span class="metric-value" id="wind_speed">--</span>
+          <span class="metric-unit">m/s</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Wind Direction</span>
+          <span class="metric-icon">🧭</span>
+        </div>
+        <div>
+          <span class="metric-value" id="wind_direction">--</span>
+          <span class="metric-unit">°</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Chart Section -->
+    <section class="chart-section">
+      <div class="section-header">
+        <h2 class="section-title">📊 Temperature Trend</h2>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="tempChart"></canvas>
+      </div>
+    </section>
+
+    <!-- Predictions Grid -->
+    <section class="predictions-grid">
+      
+      <div class="prediction-card">
+        <div class="prediction-header">
+          <div class="prediction-icon-wrapper">🌡️</div>
+          <div class="prediction-info">
+            <h3>Temperature Forecast</h3>
+            <span class="prediction-time">Next 30 minutes</span>
+          </div>
+        </div>
+        <div class="prediction-value-display">
+          <span class="prediction-value">--</span> °C
+        </div>
+        <span class="prediction-confidence">🤖 AI Powered</span>
+      </div>
+
+      <div class="prediction-card">
+        <div class="prediction-header">
+          <div class="prediction-icon-wrapper">💧</div>
+          <div class="prediction-info">
+            <h3>Humidity Forecast</h3>
+            <span class="prediction-time">Next 30 minutes</span>
+          </div>
+        </div>
+        <div class="prediction-value-display">
+          <span class="prediction-value">--</span> %
+        </div>
+        <span class="prediction-confidence">🤖 AI Powered</span>
+      </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <p class="footer-line"><strong>Developed by Shahriar Alom Masud</strong></p>
+      <p class="footer-line">Powered by Open Meteo, InfluxDB Cloud & Machine Learning</p>
+      <p class="footer-line">
+        <a href="https://github.com/Masud744" target="_blank" class="footer-link">
+          <span class="github-icon">⚙️</span> View on GitHub
+        </a>
+      </p>
+    </footer>
 
   </div>
 
-  <div class="chart-container">
-    <h2>📊 Temperature Over Time</h2>
-    <canvas id="tempChart"></canvas>
-  </div>
-
-  <!-- Prediction Section -->
-<div class="prediction-container">
-  <h2>🔮 AI Weather Prediction (Upcoming)</h2>
-
-  <div class="prediction-cards">
-
-    <div class="prediction-card">
-      <h4>🌡 Predicted Temperature</h4>
-      <p class="prediction-value">-- °C</p>
-      <small>Next 30 minutes • Model not active</small>
-    </div>
-
-    <div class="prediction-card">
-      <h4>💧 Predicted Humidity</h4>
-      <p class="prediction-value">-- %</p>
-      <small>Next 30 minutes • Coming soon</small>
-    </div>
-
-  </div>
-</div>
-
-
-  <p class="status" id="status">Waiting for data...</p>
-
-  <!-- JS LINK -->
+  <!-- JavaScript Link -->
   <script src="app.js"></script>
 
 </body>
