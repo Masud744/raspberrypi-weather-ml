@@ -60,6 +60,22 @@ FastAPI Backend (REST API + ML)
 Netlify Frontend (Dashboard)
 ```
 
+##  Live Project Demo
+
+You can visit the live deployed dashboard here:
+
+ **Live Dashboard:**  
+https://raspberrypi-weather-dashboard.netlify.app/
+
+The dashboard displays:
+- Real-time weather data
+- Interactive charts and trends
+- Short-term temperature & humidity predictions
+- AI-powered forecast indicators
+
+> Note: Data updates automatically based on the Raspberry Pi ingestion service and backend API.
+
+
 ##  Project Screenshots
 
 ###  User Authentication – Login
